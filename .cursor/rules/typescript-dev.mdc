@@ -1,0 +1,139 @@
+---
+alwaysApply: true
+---
+
+# TypeScript Build Scripts & Automation
+
+Senior TypeScript developer for build scripts, CLI tools, and code generation utilities.
+
+## Code Standards
+
+**TypeScript:**
+- Strict mode enabled, ES2022+, ESM modules
+- Explicit return types, no implicit any
+- Use `tsx` for execution
+
+**Style:**
+- Pure functions, single responsibility
+- Named exports (no default exports)
+- Result type pattern for error handling:
+```typescript
+type Result<T> = { success: true; data: T } | { success: false; error: Error }
+```
+
+**Error Handling:**
+```typescript
+class ExtractionError extends Error {
+  constructor(message: string, public readonly cause?: unknown) {
+    super(message);
+    this.name = 'ExtractionError';
+  }
+}
+```
+
+**Logging:**
+```typescript
+import chalk from 'chalk';
+
+const log = {
+  info: (msg: string) => console.log(chalk.blue('ℹ'), msg),
+  success: (msg: string) => console.log(chalk.green('✓'), msg),
+  error: (msg: string) => console.error(chalk.red('✖'), msg),
+  warn: (msg: string) => console.warn(chalk.yellow('⚠'), msg)
+};
+```
+
+## Essential Dependencies
+
+- `chalk` - colored output
+- `fast-glob` - file matching  
+- `commander` - CLI args
+- `ora` - progress spinners
+
+## File Operations
+
+```typescript
+import { readFile, writeFile } from 'fs/promises';
+import { glob } from 'fast-glob';
+
+// Always use async/await with proper error handling
+async function processFiles(pattern: string): Promise<Result<string[]>> {
+  try {
+    const files = await glob(pattern);
+    return { success: true, data: files };
+  } catch (error) {
+    return { success: false, error: new Error('Failed to find files', { cause: error }) };
+  }
+}
+```
+
+## CLI Pattern
+
+```typescript
+import { Command } from 'commander';
+
+const program = new Command()
+  .name('tool-name')
+  .description('What it does')
+  .requiredOption('-i, --input <path>', 'Input path')
+  .option('-o, --output <path>', 'Output path', './output')
+  .option('--dry-run', 'Preview without writing')
+  .action(async (options) => {
+    await main(options);
+  });
+
+program.parse();
+```
+
+## Code Generation
+
+Always include:
+- Generation timestamp
+- "Auto-generated - DO NOT EDIT" warning
+- Source reference
+
+```typescript
+function generateCode(data: any[]): string {
+  return `// Auto-generated from X on ${new Date().toISOString()}
+// DO NOT EDIT MANUALLY
+
+export class Generated {
+${data.map(item => generateItem(item)).join('\n\n')}
+}`;
+}
+```
+
+## Performance
+
+```typescript
+// Batch process in parallel
+async function processBatch<T>(items: T[], batchSize = 10): Promise<Result[]> {
+  const results = [];
+  for (let i = 0; i < items.length; i += batchSize) {
+    const batch = items.slice(i, i + batchSize);
+    results.push(...await Promise.all(batch.map(process)));
+  }
+  return results;
+}
+```
+
+## Package.json Scripts
+
+```json
+{
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx --watch src/main.ts",
+    "start": "tsx src/main.ts"
+  }
+}
+```
+
+## Key Principles
+
+- Small, composable functions
+- Clear error messages with actionable steps
+- Progress feedback (spinners, logs)
+- Safe to re-run (idempotent)
+- Support both interactive and CI usage
