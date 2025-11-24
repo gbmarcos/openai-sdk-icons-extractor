@@ -11,10 +11,12 @@ A TypeScript CLI tool specifically designed to extract and convert SVG icons fro
 - Converts JSX numeric values to standard SVG attributes
 - Automatically calculates dimensions from `viewBox` or uses custom values
 - Adds proper SVG namespace (`xmlns`)
-- Replaces `currentColor` with black (`#000000`)
+- Replaces `currentColor` with customizable hex color (default: `#000000`)
+- Converts camelCase attributes to kebab-case (`fillRule` → `fill-rule`)
+- Preserves special SVG attributes (`viewBox`, `preserveAspectRatio`, etc.)
 - Converts filenames to snake_case
 - Processes multiple files in batch
-- Clean error reporting
+- Clean error reporting with color validation
 
 ## About OpenAI Apps SDK UI
 
@@ -90,12 +92,67 @@ npm start  # No width/height specified
 - If `viewBox="0 0 24 24"` → automatically sets `width="24" height="24"`
 - If no `viewBox` exists → leaves original values unchanged
 
+### Custom Color Replacement
+
+Replace `currentColor` with a custom hex color:
+
+```bash
+npm start -- --color "#404040"
+```
+
+This will replace all instances of `currentColor` with your specified color. If not provided, defaults to `#000000` (black).
+
+**Example:**
+```bash
+npm start -- --color "#ff0000"  # Red icons
+npm start -- --color "#3b82f6"  # Blue icons
+npm start                        # Black icons (default)
+```
+
+### Organize Icons by Group
+
+Use `--group` to organize icons into subdirectories. Files will be saved in a folder with the group name:
+
+```bash
+npm start -- --color "#ffffff" --group "dark"
+```
+
+This will generate files in `results/dark/`:
+```
+results/dark/
+├── add_member.svg
+├── arrow_up.svg
+└── ...
+```
+
+**Example use cases:**
+```bash
+# Generate dark theme icons (white) in results/dark/
+npm start -- --color "#ffffff" --group "dark"
+
+# Generate light theme icons (black) in results/light/
+npm start -- --color "#000000" --group "light"
+
+# Generate brand colored icons in results/brand/
+npm start -- --color "#3b82f6" --group "brand"
+
+# Supports hyphens and underscores
+npm start -- --color "#ffffff" --group "dark-mode"
+npm start -- --color "#000000" --group "light_theme"
+```
+
+**Note:** Group name must contain only letters, numbers, hyphens (`-`), and underscores (`_`). Spaces and special characters are not allowed.
+
 ### CLI Options
 
 - `-i, --input <path>` - Input directory containing TSX files (default: `./icons`)
 - `-o, --output <path>` - Output directory for SVG files (default: `./results`)
 - `--width <value>` - Set width attribute for all SVG files (replaces existing values)
 - `--height <value>` - Set height attribute for all SVG files (replaces existing values)
+- `--color <hex>` - Hex color to replace currentColor (e.g., `#404040`, default: `#000000`)
+- `--group <name>` - Group icons in a subdirectory (e.g., `"dark"` → `results/dark/icon.svg`)
+  - Only letters, numbers, hyphens, and underscores allowed
+  - No spaces or special characters
 - `-V, --version` - Output version number
 - `-h, --help` - Display help information
 
@@ -179,10 +236,33 @@ JSX numeric expressions (values in curly braces) are converted to standard SVG s
 <path stroke="currentColor" fill="currentColor" />
 ```
 
-**After:**
+**After (default):**
 ```svg
 <path stroke="#000000" fill="#000000" />
 ```
+
+**After (with --color "#404040"):**
+```svg
+<path stroke="#404040" fill="#404040" />
+```
+
+The replacement color can be customized using the `--color` option.
+
+### 6. Convert CamelCase Attributes to Kebab-Case
+
+**Before:**
+```tsx
+<path fillRule="evenodd" clipRule="evenodd" />
+```
+
+**After:**
+```svg
+<path fill-rule="evenodd" clip-rule="evenodd" />
+```
+
+React/JSX uses camelCase for SVG attributes, but standard SVG uses kebab-case. The tool automatically converts attributes like `fillRule`, `clipRule`, `strokeWidth`, etc. to their proper SVG format.
+
+**Note:** Special SVG attributes that must remain in camelCase (like `viewBox`, `preserveAspectRatio`) are preserved correctly.
 
 ## Use Case
 
@@ -191,6 +271,7 @@ This tool is particularly useful when you want to:
 - Create a custom icon library with consistent styling
 - Integrate ChatGPT-style icons in static websites or other frameworks
 - Build design systems based on OpenAI's visual language
+- Generate multiple icon groups for different themes (light, dark, brand colors)
 
 ## Example
 
@@ -212,12 +293,66 @@ const AddMember = (props: SVGProps<SVGSVGElement>) => (
 export default AddMember
 ```
 
-### Output: `results/add_member.svg`
+### Output (default): `results/add_member.svg`
 
 ```svg
 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#000000">
   <path d="M11.4998 7.5C11.4998 5.01472..." fill="#000000" />
 </svg>
+```
+
+### Output (with --color "#ffffff" --group "dark"): `results/dark/add_member.svg`
+
+```svg
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#ffffff">
+  <path d="M11.4998 7.5C11.4998 5.01472..." fill="#ffffff" />
+</svg>
+```
+
+**Note:** When using `--group`, files are saved in a subdirectory with the group name.
+
+## Real World Example: Generating Multiple Icon Groups
+
+Generate icons for both light and dark themes organized in separate directories:
+
+```bash
+# Generate dark theme icons (white color) in results/dark/
+npm start -- --color "#ffffff" --group "dark"
+
+# Generate light theme icons (black color) in results/light/
+npm start -- --color "#000000" --group "light"
+
+# Generate brand colored icons in results/brand/
+npm start -- --color "#3b82f6" --group "brand"
+```
+
+This will create:
+```
+results/
+├── dark/
+│   ├── add_member.svg    # White icons for dark backgrounds
+│   ├── arrow_up.svg
+│   └── ...
+├── light/
+│   ├── add_member.svg    # Black icons for light backgrounds
+│   ├── arrow_up.svg
+│   └── ...
+└── brand/
+    ├── add_member.svg    # Blue brand colored icons
+    ├── arrow_up.svg
+    └── ...
+```
+
+Use them in your application:
+```html
+<!-- Dark theme -->
+<img src="icons/dark/add_member.svg" alt="Add Member">
+
+<!-- Light theme -->
+<img src="icons/light/add_member.svg" alt="Add Member">
+
+<!-- Brand theme -->
+<img src="icons/brand/add_member.svg" alt="Add Member">
 ```
 
 ## Project Structure

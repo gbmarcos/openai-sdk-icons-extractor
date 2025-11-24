@@ -23,6 +23,8 @@ interface Options {
   output: string;
   width?: string;
   height?: string;
+  color?: string;
+  group?: string;
 }
 
 /**
@@ -42,11 +44,17 @@ async function processFile(
   inputPath: string,
   outputDir: string,
   width?: string,
-  height?: string
+  height?: string,
+  color?: string,
+  group?: string
 ): Promise<ProcessResult> {
   const fileName = basename(inputPath, '.tsx');
   const snakeCaseFileName = toSnakeCase(fileName);
-  const outputPath = join(outputDir, `${snakeCaseFileName}.svg`);
+  
+  // If group is provided, save in a subdirectory
+  const targetDir = group ? join(outputDir, group) : outputDir;
+  const outputFileName = `${snakeCaseFileName}.svg`;
+  const outputPath = join(targetDir, outputFileName);
   
   // Extract SVG from TSX
   const extractResult = await extractSvgFromTsx(inputPath);
@@ -59,7 +67,7 @@ async function processFile(
   }
   
   // Transform SVG
-  const transformResult = transformSvg(extractResult.data, { width, height });
+  const transformResult = transformSvg(extractResult.data, { width, height, color });
   if (!transformResult.success) {
     return {
       file: inputPath,
@@ -85,22 +93,57 @@ async function processFile(
 }
 
 /**
+ * Validates that a color string is a valid hex color
+ */
+function isValidHexColor(color: string): boolean {
+  return /^#[0-9A-Fa-f]{6}$/.test(color);
+}
+
+/**
+ * Validates that a group name is valid for folder names
+ * Allows: letters, numbers, hyphens, underscores
+ * Disallows: spaces, special characters, path separators
+ */
+function isValidGroup(group: string): boolean {
+  return /^[a-zA-Z0-9_-]+$/.test(group);
+}
+
+/**
  * Main CLI function
  */
 async function main(options: Options): Promise<void> {
   const inputDir = options.input;
   const outputDir = options.output;
-  const { width, height } = options;
+  const { width, height, color, group } = options;
+  
+  // Validate color format if provided
+  if (color && !isValidHexColor(color)) {
+    log.error(`Invalid color format: ${color}. Must be a hex color like #000000 or #404040`);
+    process.exit(1);
+  }
+  
+  // Validate group format if provided
+  if (group && !isValidGroup(group)) {
+    log.error(`Invalid group name: ${group}. Only letters, numbers, hyphens, and underscores are allowed.`);
+    process.exit(1);
+  }
   
   log.info(`Converting TSX icons from: ${inputDir}`);
   log.info(`Output directory: ${outputDir}`);
   if (width || height) {
     log.info(`Custom dimensions: ${width ? `width="${width}"` : ''} ${height ? `height="${height}"` : ''}`.trim());
   }
+  if (color) {
+    log.info(`Replacing currentColor with: ${color}`);
+  }
+  if (group) {
+    log.info(`Saving to group subdirectory: ${group}/`);
+  }
   
   // Create output directory if it doesn't exist
+  const targetOutputDir = group ? join(outputDir, group) : outputDir;
   try {
-    await mkdir(outputDir, { recursive: true });
+    await mkdir(targetOutputDir, { recursive: true });
   } catch (error) {
     log.error(`Failed to create output directory: ${error}`);
     process.exit(1);
@@ -127,7 +170,7 @@ async function main(options: Options): Promise<void> {
   // Process all files
   const results: ProcessResult[] = [];
   for (const file of files) {
-    const result = await processFile(file, outputDir, width, height);
+    const result = await processFile(file, outputDir, width, height, color, group);
     results.push(result);
     
     if (result.success) {
@@ -171,6 +214,14 @@ const program = new Command()
   .option(
     '--height <value>',
     'Set height attribute for all SVG files (replaces existing values)'
+  )
+  .option(
+    '--color <hex>',
+    'Hex color to replace currentColor (e.g., #404040, default: #000000)'
+  )
+  .option(
+    '--group <name>',
+    'Group icons in a subdirectory (e.g., "dark" -> results/dark/icon.svg)'
   )
   .action(async (options) => {
     await main(options);
