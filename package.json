@@ -1,7 +1,7 @@
 {
-  "name": "tsx-to-svg-converter",
+  "name": "openai-sdk-icons-extractor",
   "version": "1.0.0",
-  "description": "Convert TSX icon files to clean SVG files",
+  "description": "Extract and convert SVG icons from OpenAI Apps SDK UI to standalone SVG files",
   "type": "module",
   "main": "dist/main.js",
   "scripts": {

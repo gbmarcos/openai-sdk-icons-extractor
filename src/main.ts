@@ -18,6 +18,13 @@ interface ProcessResult {
   error?: string;
 }
 
+interface Options {
+  input: string;
+  output: string;
+  width?: string;
+  height?: string;
+}
+
 /**
  * Converts a string from PascalCase/camelCase to snake_case
  */
@@ -33,7 +40,9 @@ function toSnakeCase(str: string): string {
  */
 async function processFile(
   inputPath: string,
-  outputDir: string
+  outputDir: string,
+  width?: string,
+  height?: string
 ): Promise<ProcessResult> {
   const fileName = basename(inputPath, '.tsx');
   const snakeCaseFileName = toSnakeCase(fileName);
@@ -50,7 +59,7 @@ async function processFile(
   }
   
   // Transform SVG
-  const transformResult = transformSvg(extractResult.data);
+  const transformResult = transformSvg(extractResult.data, { width, height });
   if (!transformResult.success) {
     return {
       file: inputPath,
@@ -78,12 +87,16 @@ async function processFile(
 /**
  * Main CLI function
  */
-async function main(options: { input: string; output: string }): Promise<void> {
+async function main(options: Options): Promise<void> {
   const inputDir = options.input;
   const outputDir = options.output;
+  const { width, height } = options;
   
   log.info(`Converting TSX icons from: ${inputDir}`);
   log.info(`Output directory: ${outputDir}`);
+  if (width || height) {
+    log.info(`Custom dimensions: ${width ? `width="${width}"` : ''} ${height ? `height="${height}"` : ''}`.trim());
+  }
   
   // Create output directory if it doesn't exist
   try {
@@ -114,7 +127,7 @@ async function main(options: { input: string; output: string }): Promise<void> {
   // Process all files
   const results: ProcessResult[] = [];
   for (const file of files) {
-    const result = await processFile(file, outputDir);
+    const result = await processFile(file, outputDir, width, height);
     results.push(result);
     
     if (result.success) {
@@ -150,6 +163,14 @@ const program = new Command()
     '-o, --output <path>',
     'Output directory for SVG files',
     './results'
+  )
+  .option(
+    '--width <value>',
+    'Set width attribute for all SVG files (replaces existing values)'
+  )
+  .option(
+    '--height <value>',
+    'Set height attribute for all SVG files (replaces existing values)'
   )
   .action(async (options) => {
     await main(options);
