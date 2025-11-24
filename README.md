@@ -2,7 +2,7 @@
 
 A TypeScript CLI tool specifically designed to extract and convert SVG icons from the **OpenAI Apps SDK UI** component library into clean, standalone SVG files.
 
-[OpenAI Apps SDK UI](https://github.com/openai/openai-apps-sdk-ui) is a resource provided by OpenAI for developers building applications for ChatGPT. This tool extracts the icon components from TSX format and converts them into pure SVG files ready to use in any project.
+[OpenAI Apps SDK UI](https://github.com/openai/apps-sdk-ui) is a resource provided by OpenAI for developers building applications for ChatGPT. This tool extracts the icon components from TSX format and converts them into pure SVG files ready to use in any project.
 
 ## Features
 
@@ -29,12 +29,12 @@ This tool allows you to:
 
 1. Clone or download the OpenAI Apps SDK UI repository:
    ```bash
-   git clone https://github.com/openai/openai-apps-sdk-ui.git
+   git clone https://github.com/openai/apps-sdk-ui.git
    ```
 
 2. Copy the icon components from the SDK to the `icons/` folder:
    ```bash
-   cp openai-apps-sdk-ui/packages/ui/src/icons/*.tsx ./icons/
+   cp apps-sdk-ui/src/components/Icon/svg/*.tsx ./icons/
    ```
 
 3. Run the converter to generate SVG files
