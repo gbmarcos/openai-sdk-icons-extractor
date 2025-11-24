@@ -4,6 +4,34 @@ A TypeScript CLI tool specifically designed to extract and convert SVG icons fro
 
 [OpenAI Apps SDK UI](https://github.com/openai/apps-sdk-ui) is a resource provided by OpenAI for developers building applications for ChatGPT. This tool extracts the icon components from TSX format and converts them into pure SVG files ready to use in any project.
 
+## Icon Examples
+
+Here are some examples of icons generated from each theme:
+
+### Dark Theme (`--group "dark"`)
+<div style="background-color: #1a1a1a; padding: 20px; border-radius: 8px; display: inline-block;">
+  <div style="color: #ffffff; font-size: 12px; margin-bottom: 10px; font-family: monospace;">Color: #ffffff</div>
+  <img src="results/dark/chat.svg" alt="Chat" width="32" height="32">
+  <img src="results/dark/magnifying_glass_search.svg" alt="Search" width="32" height="32">
+  <img src="results/dark/agent.svg" alt="Agent" width="32" height="32">
+</div>
+
+### Light Theme (`--group "light"`)
+<div style="background-color: #f5f5f5; padding: 20px; border-radius: 8px; display: inline-block;">
+  <div style="color: #000000; font-size: 12px; margin-bottom: 10px; font-family: monospace;">Color: #000000</div>
+  <img src="results/light/chat.svg" alt="Chat" width="32" height="32">
+  <img src="results/light/magnifying_glass_search.svg" alt="Search" width="32" height="32">
+  <img src="results/light/agent.svg" alt="Agent" width="32" height="32">
+</div>
+
+### Custom Theme (`--group "custom"`)
+<div style="background-color: #f5f5f5; padding: 20px; border-radius: 8px; display: inline-block;">
+  <div style="color: #404040; font-size: 12px; margin-bottom: 10px; font-family: monospace;">Color: #404040</div>
+  <img src="results/custom/chat.svg" alt="Chat" width="32" height="32">
+  <img src="results/custom/magnifying_glass_search.svg" alt="Search" width="32" height="32">
+  <img src="results/custom/agent.svg" alt="Agent" width="32" height="32">
+</div>
+
 ## Features
 
 - Extracts SVG content from OpenAI SDK TSX icon components
