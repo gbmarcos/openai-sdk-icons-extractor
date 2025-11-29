@@ -6,7 +6,7 @@
   <text x="20" y="30" fill="#000000" font-family="monospace" font-size="12">Color: #000000</text>
   
   <!-- Imágenes (usando referencia externa con ruta relativa desde /previews/) -->
-  <image x="20" y="50" width="32" height="32" href="../results/light/chat.svg"/>
-  <image x="62" y="50" width="32" height="32" href="../results/light/magnifying_glass_search.svg"/>
-  <image x="104" y="50" width="32" height="32" href="../results/light/agent.svg"/>
+  <image x="20" y="50" width="32" height="32" href="https://raw.githubusercontent.com/gbmarcos/openai-sdk-icons-extractor/main/results/light/chat.svg"/>
+  <image x="62" y="50" width="32" height="32" href="https://raw.githubusercontent.com/gbmarcos/openai-sdk-icons-extractor/main/results/light/magnifying_glass_search.svg"/>
+  <image x="104" y="50" width="32" height="32" href="https://raw.githubusercontent.com/gbmarcos/openai-sdk-icons-extractor/main/results/light/agent.svg"/>
 </svg>
