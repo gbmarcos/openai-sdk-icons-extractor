@@ -9,28 +9,13 @@ A TypeScript CLI tool specifically designed to extract and convert SVG icons fro
 Here are some examples of icons generated from each theme:
 
 ### Dark Theme (`--group "dark"`)
-<div style="background-color: #1a1a1a; padding: 20px; border-radius: 8px; display: inline-block;">
-  <div style="color: #ffffff; font-size: 12px; margin-bottom: 10px; font-family: monospace;">Color: #ffffff</div>
-  <img src="results/dark/chat.svg" alt="Chat" width="32" height="32">
-  <img src="results/dark/magnifying_glass_search.svg" alt="Search" width="32" height="32">
-  <img src="results/dark/agent.svg" alt="Agent" width="32" height="32">
-</div>
+![Dark Theme](./previews/dark.svg)
 
 ### Light Theme (`--group "light"`)
-<div style="background-color: #f5f5f5; padding: 20px; border-radius: 8px; display: inline-block;">
-  <div style="color: #000000; font-size: 12px; margin-bottom: 10px; font-family: monospace;">Color: #000000</div>
-  <img src="results/light/chat.svg" alt="Chat" width="32" height="32">
-  <img src="results/light/magnifying_glass_search.svg" alt="Search" width="32" height="32">
-  <img src="results/light/agent.svg" alt="Agent" width="32" height="32">
-</div>
+![Light Theme](./previews/light.svg)
 
 ### Custom Theme (`--group "custom"`)
-<div style="background-color: #f5f5f5; padding: 20px; border-radius: 8px; display: inline-block;">
-  <div style="color: #404040; font-size: 12px; margin-bottom: 10px; font-family: monospace;">Color: #404040</div>
-  <img src="results/custom/chat.svg" alt="Chat" width="32" height="32">
-  <img src="results/custom/magnifying_glass_search.svg" alt="Search" width="32" height="32">
-  <img src="results/custom/agent.svg" alt="Agent" width="32" height="32">
-</div>
+![Custom Theme](./previews/custom.svg)
 
 ## Features
 

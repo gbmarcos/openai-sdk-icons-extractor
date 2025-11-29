@@ -1,0 +1,12 @@
+<svg width="200" height="100" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fondo con bordes redondeados -->
+  <rect width="200" height="100" rx="8" fill="#f5f5f5"/>
+  
+  <!-- Texto del color -->
+  <text x="20" y="30" fill="#404040" font-family="monospace" font-size="12">Color: #404040</text>
+  
+  <!-- Imágenes (usando referencia externa con ruta relativa desde /previews/) -->
+  <image x="20" y="50" width="32" height="32" href="../results/custom/chat.svg"/>
+  <image x="62" y="50" width="32" height="32" href="../results/custom/magnifying_glass_search.svg"/>
+  <image x="104" y="50" width="32" height="32" href="../results/custom/agent.svg"/>
+</svg>
